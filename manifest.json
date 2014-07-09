@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "Cloudability",
+  "version": "0.2.7",
+  "description": "Buttons to change JIRA ticket status from the Github Pull Request page.",
+  "permissions": [
+    "https://github.com/cloudability/*",
+    "https://cloudability.atlassian.net/*"
+  ],
+  "web_accessible_resources": [
+    "main.js"
+  ],
+  "content_scripts": [{
+    "matches": ["https://github.com/cloudability/*"],
+    "js": ["jquery-1.11.1.min.js", "main.js"],
+    "css": ["main.css"]
+  }]
+}
