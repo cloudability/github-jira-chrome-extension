@@ -1,9 +1,10 @@
 'use strict';
 $(function() {
-  var  mergeHasHappend = false,
+  var mergeHasHappend = false,
       ticketStatusHasChanged = false,
       isPullRequest = false,
-      isBranchCompare = false;
+      isBranchCompare = false,
+      ticketNumbers = [];
 
   // if the div exists, assume we are on the pull request page
   if ($('.pull-request-tab-content').length > 0) {
@@ -56,7 +57,7 @@ $(function() {
 
   var appendTransitionButtonDiv = function(ticketNumber, transitionData) {
     transitionData = transitionData || [];
-    var divContents, fullDiv;
+    var divContents, fullDiv, button, transitionId;
 
     divContents = '' +
         '<div class="branch-action branch-action-state-clean js-mergable-state">' +
@@ -85,13 +86,14 @@ $(function() {
         divContents +
       '</div><!-- /.merge-pr -->';
 
-
     // re-rendering button
     if ($('[data-jira-ticket="'+ticketNumber+'"]').length) {
+
       $('[data-jira-ticket="'+ticketNumber+'"]')
         .off()
         .empty()
         .html(divContents);
+
     } else {
       // new button, full div
       $('.discussion-timeline-actions').append(fullDiv);
@@ -99,18 +101,19 @@ $(function() {
 
     // render the buttons
     transitionData.forEach(function(transition) {
-      var blah = '' +
-              '<button class="button primary merge-branch-action js-jira-transition" type="button" data-jira-transition-id="' + transition.id + '">' +
-                transition.name +
-              '</button>';
+      button = '' +
+        '<button class="button primary merge-branch-action js-jira-transition" type="button" data-jira-transition-id="' + transition.id + '">' +
+          transition.name +
+        '</button>';
 
-      $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-button-container').prepend(blah);
+      $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-button-container').prepend(button);
     });
 
     // listen for those button clicks, migrate the ticket state
     $('[data-jira-ticket="'+ticketNumber+'"]').on('click', '.js-jira-transition', function(e) {
+      transitionId = $(this).data('jiraTransitionId');
+
       e.preventDefault();
-      var transitionId = $(this).data('jiraTransitionId');
 
       if (transitionId && ticketNumber) {
         $.ajax({
@@ -120,8 +123,10 @@ $(function() {
           url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+ticketNumber+'/transitions',
           data: JSON.stringify({ 'transition': { 'id': transitionId }}),
           success: function() {
-            main();
+
             ticketStatusHasChanged = true;
+            main();
+
           }
         });
       }
@@ -142,40 +147,28 @@ $(function() {
   };
 
   var renderTicketStatus = function(ticketNumber) {
+    var $sel = $('[data-jira-ticket="'+ticketNumber+'"]');
 
     getIssue(ticketNumber, function(data) {
-      $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-current-state').text(data.fields.status.name);
-      $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-ticket-title').text(data.fields.summary);
+      $sel.find('.js-jira-current-state').text(data.fields.status.name);
+      $sel.find('.js-jira-ticket-title').text(data.fields.summary);
     });
 
   };
 
   var renderTicketError = function(ticketNumber, message) {
-    $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-current-state').text('Unknown');
-    $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-button-container').prepend(message);
-  };
+    var $sel = $('[data-jira-ticket="'+ticketNumber+'"]');
 
-  // pr was merged
-  $(document).on('click', '.commit-form-actions .primary:first', function() {
-    // assume this went ok
-    mergeHasHappend = true;
-  });
-
-  // prompt the user if they attempt to leave the page when a PR has been merged
-  // but the ticket status has not changed
-  window.onbeforeunload = function () {
-    if (mergeHasHappend === true && ticketStatusHasChanged === false) {
-      return 'The JIRA ticket(s) status didn\'t change, is that ok?';
-    }
+    $sel.find('.js-jira-current-state').text('Unknown');
+    $sel.find('.js-jira-button-container').prepend(message);
   };
 
   // its the main function, stuff here all-the-things!
   var main = function() {
-    var ticketNumbers = parseTicketNumbers();
+    ticketNumbers = parseTicketNumbers();
 
     // pull request page
     if (isPullRequest && ticketNumbers.length) {
-
       ticketNumbers.forEach(function(ticketNumber) {
 
         // get possible transitions
@@ -203,7 +196,7 @@ $(function() {
       if (ticketNumbers.length === 1) {
 
         getIssue(ticketNumbers[0], function(data) {
-          // insert into the input
+          // insert into the input field
           $('#pull_request_title').val(ticketNumbers[0] + ' - ' + data.fields.summary);
         });
 
@@ -214,6 +207,21 @@ $(function() {
 
   main();
 
-  // spinner https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif
+
+  // handlers, misc
+
+  // pr was merged
+  $(document).on('submit', '.js-merge-pull-request', function() {
+    // assume this went ok
+    mergeHasHappend = true;
+  });
+
+  // prompt the user if they attempt to leave the page after a PR has been merged
+  // but the ticket status has not changed
+  window.onbeforeunload = function () {
+    if (ticketNumbers.length && isPullRequest && mergeHasHappend && ticketStatusHasChanged === false) {
+      return 'The JIRA ticket(s) status didn\'t change, is that ok?';
+    }
+  };
 
 });
