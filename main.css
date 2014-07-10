@@ -14,6 +14,10 @@
   min-height: 76px;
   border-color: #205081;
 }
+.jira .branch-action-state-clean .branch-status h2 {
+  float: left;
+  margin: 0px;
+}
 .jira .button.primary {
   background-color: #3b7fc4;
   background-image: -webkit-linear-gradient(top, #3b7fc4, #336ea9);
@@ -43,4 +47,15 @@
 .jira .octicon-git-pull-request-abandoned, .jira .octicon-git-pull-request {
   background-position: -6px -3px;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAACM0lEQVR42u1a223DMAzMCB2hI3SEjtARMkJG8AYZwSNkBI/gETKCPwPkWR8gAyxBiXLqRFTCA/STyILOJI8U5dXK4XA4HI4/OBwOn6fT6XsYho+XJ3u5XLa3gOv1OpzP5/XLkj0ej183BpCu3oLj2I+jH633Q/+DG98ECGs0eD6ssa7CXSeA5BwLgyyfw1+cJcJ7vlkQoHPGzW8oWfpCwhqdsEZrlXCvEQagzpyoQnhrkjBcj7srUtCz13gqYLkgOs29G11iDcdCMQsrdBCiR1sCCh9SXldMtbnAhNzZxARpDiBsIDbldU0Ii+Xd1KbwIqQB6+WodfG8jCootimoKz0cxKosqdrS5hYTMhBKbYxaGXPxEiLzulzrImxKC1ebIk3dlVZZsfIzNoe486Z43lWs3FPXFoRuS5U45gVSmBTDuJGdQrqVXJu6Mn6XSlMT6ix1MFKW4aQxH645WSuTbL+yBC32UvGn6QDXAjPQXDuQXs8lW1yoUmlKc01KOoes2bPwnHieYjJnThWdTS295KAaskuQro5sqmmnwXyH4z8HDImsyfTzKNJm27GPIs1PTe9CuqmZ4IaTyCFdZRzzAoSWlFqFZe6gcG9jgJHu5tTc5q2rpZ1UyydYeV9VvzqRa3e58VxNmpJuEWMqrDTsWvNktXKS18j88qy6rwOUXvUu0jgYzPWgl4jfmPKm0tQS1zbFCCcuwZtqhSvc8jXSSKWx2DNv8S2Xw+FwOBwOh8PhsIdfgKB1WaVgnkwAAAAASUVORK5CYII=);
+}
+.jira .octicon-sync.minibutton {
+  float: right;
+  padding: 1px 4px;
+}
+.jira .clearfix {
+  clear: both;
+  height: 0px;
+}
+.jira .issue-title {
+  float: left;
 }

@@ -65,13 +65,14 @@ $(function() {
           '<div class="branch-action-body">' +
 
             '<div class="branch-status">' +
-              '<h2 style="float: left; margin: 0px;"><a href="https://cloudability.atlassian.net/browse/' + ticketNumber +'" target="_blank">' + ticketNumber + '</a></h2>' +
+              '<h2><a href="https://cloudability.atlassian.net/browse/' + ticketNumber +'" target="_blank">' + ticketNumber + '</a></h2>' +
               '<div style="float: right;">' +
                 'Current Ticket Status: <strong><span class="js-jira-current-state"></span</strong>' +
               '</div>' +
-              '<div style="clear: both; height: 0px;">&nbsp;</div>' +
-              '<div style="float: left" class="js-jira-ticket-title"></div>' +
-              '<div style="clear: both; height: 0px;">&nbsp;</div>' +
+              '<div class="clearfix">&nbsp;</div>' +
+              '<div class="js-jira-ticket-title issue-title"></div>' +
+              '<button class="js-refresh-issue octicon octicon-sync minibutton"></button>' +
+              '<div class="clearfix">&nbsp;</div>' +
             '</div>' +
 
             '<div class="merge-message js-jira-button-container">' +
@@ -132,6 +133,16 @@ $(function() {
       }
 
     });
+
+    // refresh button
+    $('[data-jira-ticket="'+ticketNumber+'"]').on('click', '.js-refresh-issue', function(e) {
+      var ticketNumber = $(this).closest('.js-details-container').data('jiraTicket');
+
+      e.preventDefault();
+
+      renderIssue(ticketNumber);
+    });
+
   };
 
   // wrapper around the ajax call
@@ -163,6 +174,24 @@ $(function() {
     $sel.find('.js-jira-button-container').prepend(message);
   };
 
+  var renderIssue = function(ticketNumber) {
+    // get possible transitions
+    $.ajax({
+      type: 'GET',
+      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+ticketNumber+'/transitions'
+    }).done(function(data) {
+
+      appendTransitionButtonDiv(ticketNumber, data.transitions);
+      renderTicketStatus(ticketNumber);
+
+    }).error(function(data) {
+
+      appendTransitionButtonDiv(ticketNumber);
+      renderTicketError(ticketNumber, JSON.parse(data.responseText).errorMessages.join(' '));
+
+    });
+  };
+
   // its the main function, stuff here all-the-things!
   var main = function() {
     ticketNumbers = parseTicketNumbers();
@@ -171,21 +200,7 @@ $(function() {
     if (isPullRequest && ticketNumbers.length) {
       ticketNumbers.forEach(function(ticketNumber) {
 
-        // get possible transitions
-        $.ajax({
-          type: 'GET',
-          url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+ticketNumber+'/transitions'
-        }).done(function(data) {
-
-          appendTransitionButtonDiv(ticketNumber, data.transitions);
-          renderTicketStatus(ticketNumber);
-
-        }).error(function(data) {
-
-          appendTransitionButtonDiv(ticketNumber);
-          renderTicketError(ticketNumber, JSON.parse(data.responseText).errorMessages.join(' '));
-
-        });
+        renderIssue(ticketNumber);
 
       });
 
@@ -214,6 +229,9 @@ $(function() {
   $(document).on('submit', '.js-merge-pull-request', function() {
     // assume this went ok
     mergeHasHappend = true;
+
+    // gets fresh data
+    main();
   });
 
   // prompt the user if they attempt to leave the page after a PR has been merged
