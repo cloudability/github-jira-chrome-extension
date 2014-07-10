@@ -1,10 +1,10 @@
 'use strict';
 $(function() {
   var mergeHasHappend = false,
-      ticketStatusHasChanged = false,
+      issueStatusHasChanged = false,
       isPullRequest = false,
       isBranchCompare = false,
-      ticketNumbers = [];
+      issueNumbers = [];
 
   // if the div exists, assume we are on the pull request page
   if ($('.pull-request-tab-content').length > 0) {
@@ -23,26 +23,26 @@ $(function() {
     });
   };
 
-  // figure out the JIRA ticket numbers
-  var parseTicketNumbers = function() {
+  // figure out the JIRA issue numbers
+  var parseIssueNumbers = function() {
     var matches = [],
         results = [];
 
     // look in the issue title
-    matches = grepForTicketNumber($('.js-issue-title').text());
+    matches = grepForIssueNumber($('.js-issue-title').text());
     if (matches.length) {
       results = results.concat(matches);
     }
 
     // the second occurance of a branch listing
-    matches = grepForTicketNumber($('.current-branch').eq(1).text());
+    matches = grepForIssueNumber($('.current-branch').eq(1).text());
     if (matches.length) {
       results = results.concat(matches);
     }
 
     // timeline commits
     $('.timeline-commits a.message').each(function() {
-      matches = grepForTicketNumber($(this).text());
+      matches = grepForIssueNumber($(this).text());
       if (matches.length) {
         results = results.concat(matches);
       }
@@ -51,11 +51,11 @@ $(function() {
     return unique(results);
   };
 
-  var grepForTicketNumber = function(text) {
+  var grepForIssueNumber = function(text) {
     return text.match(/(CA\-[\d]+)/g) || [];
   };
 
-  var appendTransitionButtonDiv = function(ticketNumber, transitionData) {
+  var appendTransitionButtonDiv = function(issueNumber, transitionData) {
     transitionData = transitionData || [];
     var divContents, fullDiv, button, transitionId;
 
@@ -65,12 +65,12 @@ $(function() {
           '<div class="branch-action-body">' +
 
             '<div class="branch-status">' +
-              '<h2><a href="https://cloudability.atlassian.net/browse/' + ticketNumber +'" target="_blank">' + ticketNumber + '</a></h2>' +
+              '<h2><a href="https://cloudability.atlassian.net/browse/' + issueNumber +'" target="_blank">' + issueNumber + '</a></h2>' +
               '<div style="float: right;">' +
                 'Current Ticket Status: <strong><span class="js-jira-current-state"></span</strong>' +
               '</div>' +
               '<div class="clearfix">&nbsp;</div>' +
-              '<div class="js-jira-ticket-title issue-title"></div>' +
+              '<div class="js-jira-issue-title issue-title"></div>' +
               '<button class="js-refresh-issue octicon octicon-sync minibutton"></button>' +
               '<div class="clearfix">&nbsp;</div>' +
             '</div>' +
@@ -83,14 +83,14 @@ $(function() {
 
     // the container. split apart so the contents can be used separately when re-rendered
     fullDiv = '' +
-      '<div data-jira-ticket="'+ticketNumber+'" class="js-details-container jira merge-pr">' +
+      '<div data-jira-issue="'+issueNumber+'" class="js-details-container jira merge-pr">' +
         divContents +
       '</div><!-- /.merge-pr -->';
 
     // re-rendering button
-    if ($('[data-jira-ticket="'+ticketNumber+'"]').length) {
+    if ($('[data-jira-issue="'+issueNumber+'"]').length) {
 
-      $('[data-jira-ticket="'+ticketNumber+'"]')
+      $('[data-jira-issue="'+issueNumber+'"]')
         .off()
         .empty()
         .html(divContents);
@@ -107,25 +107,25 @@ $(function() {
           transition.name +
         '</button>';
 
-      $('[data-jira-ticket="'+ticketNumber+'"]').find('.js-jira-button-container').prepend(button);
+      $('[data-jira-issue="'+issueNumber+'"]').find('.js-jira-button-container').prepend(button);
     });
 
-    // listen for those button clicks, migrate the ticket state
-    $('[data-jira-ticket="'+ticketNumber+'"]').on('click', '.js-jira-transition', function(e) {
+    // listen for those button clicks, migrate the jira issue state
+    $('[data-jira-issue="'+issueNumber+'"]').on('click', '.js-jira-transition', function(e) {
       transitionId = $(this).data('jiraTransitionId');
 
       e.preventDefault();
 
-      if (transitionId && ticketNumber) {
+      if (transitionId && issueNumber) {
         $.ajax({
           type: 'POST',
           dataType: 'json',
           contentType: 'application/json',
-          url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+ticketNumber+'/transitions',
+          url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber+'/transitions',
           data: JSON.stringify({ 'transition': { 'id': transitionId }}),
           success: function() {
 
-            ticketStatusHasChanged = true;
+            issueStatusHasChanged = true;
             main();
 
           }
@@ -135,72 +135,72 @@ $(function() {
     });
 
     // refresh button
-    $('[data-jira-ticket="'+ticketNumber+'"]').on('click', '.js-refresh-issue', function(e) {
-      var ticketNumber = $(this).closest('.js-details-container').data('jiraTicket');
+    $('[data-jira-issue="'+issueNumber+'"]').on('click', '.js-refresh-issue', function(e) {
+      var issueNumber = $(this).closest('.js-details-container').data('jiraIssue');
 
       e.preventDefault();
 
-      renderIssue(ticketNumber);
+      renderIssue(issueNumber);
     });
 
   };
 
   // wrapper around the ajax call
-  var getIssue = function(ticketNumber, cb) {
+  var getIssue = function(issueNumber, cb) {
     $.ajax({
       type: 'GET',
-      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+ticketNumber
+      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber
     }).done(function(data) {
       cb(data);
     }).error(function(data) {
-      console.error('getIssue FACK!', ticketNumber, data);
+      console.error('getIssue FACK!', issueNumber, data);
     });
   };
 
-  var renderTicketStatus = function(ticketNumber) {
-    var $sel = $('[data-jira-ticket="'+ticketNumber+'"]');
+  var renderIssueStatus = function(issueNumber) {
+    var $sel = $('[data-jira-issue="'+issueNumber+'"]');
 
-    getIssue(ticketNumber, function(data) {
+    getIssue(issueNumber, function(data) {
       $sel.find('.js-jira-current-state').text(data.fields.status.name);
-      $sel.find('.js-jira-ticket-title').text(data.fields.summary);
+      $sel.find('.js-jira-issue-title').text(data.fields.summary);
     });
 
   };
 
-  var renderTicketError = function(ticketNumber, message) {
-    var $sel = $('[data-jira-ticket="'+ticketNumber+'"]');
+  var renderIssueError = function(issueNumber, message) {
+    var $sel = $('[data-jira-issue="'+issueNumber+'"]');
 
     $sel.find('.js-jira-current-state').text('Unknown');
     $sel.find('.js-jira-button-container').prepend(message);
   };
 
-  var renderIssue = function(ticketNumber) {
+  var renderIssue = function(issueNumber) {
     // get possible transitions
     $.ajax({
       type: 'GET',
-      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+ticketNumber+'/transitions'
+      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber+'/transitions'
     }).done(function(data) {
 
-      appendTransitionButtonDiv(ticketNumber, data.transitions);
-      renderTicketStatus(ticketNumber);
+      appendTransitionButtonDiv(issueNumber, data.transitions);
+      renderIssueStatus(issueNumber);
 
     }).error(function(data) {
 
-      appendTransitionButtonDiv(ticketNumber);
-      renderTicketError(ticketNumber, JSON.parse(data.responseText).errorMessages.join(' '));
+      appendTransitionButtonDiv(issueNumber);
+      renderIssueError(issueNumber, JSON.parse(data.responseText).errorMessages.join(' '));
 
     });
   };
 
   // its the main function, stuff here all-the-things!
   var main = function() {
-    ticketNumbers = parseTicketNumbers();
+    issueNumbers = parseIssueNumbers();
 
     // pull request page
-    if (isPullRequest && ticketNumbers.length) {
-      ticketNumbers.forEach(function(ticketNumber) {
+    if (isPullRequest && issueNumbers.length) {
+      issueNumbers.forEach(function(issueNumber) {
 
-        renderIssue(ticketNumber);
+        renderIssue(issueNumber);
 
       });
 
@@ -208,11 +208,11 @@ $(function() {
     } else if (isBranchCompare) {
 
       // keeping it simple
-      if (ticketNumbers.length === 1) {
+      if (issueNumbers.length === 1) {
 
-        getIssue(ticketNumbers[0], function(data) {
+        getIssue(issueNumbers[0], function(data) {
           // insert into the input field
-          $('#pull_request_title').val(ticketNumbers[0] + ' - ' + data.fields.summary);
+          $('#pull_request_title').val(issueNumbers[0] + ' - ' + data.fields.summary);
         });
 
       }
@@ -235,9 +235,9 @@ $(function() {
   });
 
   // prompt the user if they attempt to leave the page after a PR has been merged
-  // but the ticket status has not changed
+  // but the issue status has not changed
   window.onbeforeunload = function () {
-    if (ticketNumbers.length && isPullRequest && mergeHasHappend && ticketStatusHasChanged === false) {
+    if (issueNumbers.length && isPullRequest && mergeHasHappend && issueStatusHasChanged === false) {
       return 'The JIRA ticket(s) status didn\'t change, is that ok?';
     }
   };
