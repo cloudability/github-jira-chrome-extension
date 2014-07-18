@@ -126,8 +126,8 @@ $(function() {
           success: function() {
 
             issueStatusHasChanged = true;
-            main();
 
+            renderIssue(issueNumber);
           }
         });
       }
@@ -230,7 +230,7 @@ $(function() {
     // assume this went ok
     mergeHasHappend = true;
 
-    // gets fresh data
+    // re-render all the stuffs
     main();
   });
 
