@@ -1,20 +1,39 @@
 'use strict';
+
+var main;
+
+// messages from elsewhere! (probably background.js)
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.onHistoryStateUpdated === true) {
+    sendResponse({heardOnHistoryStateUpdated: true});
+    main();
+  }
+});
+
 $(function() {
   var mergeHasHappend = false,
       issueStatusHasChanged = false,
-      isPullRequest = false,
-      isBranchCompare = false,
+      isPullRequest,
+      isBranchCompare,
+      checkPageLocation,
       issueNumbers = [];
 
-  // if the div exists, assume we are on the pull request page
-  if ($('.pull-request-tab-content').length > 0) {
-    isPullRequest = true;
-  }
+  // we have to re-check on pushState :/
+  checkPageLocation = function() {
+    // reset
+    isPullRequest = false;
+    isBranchCompare = false;
 
-  // we're on the comparison page which has the 'create pull request button'
-  if (window.location.search === '?expand=1') {
-    isBranchCompare = true;
-  }
+    // if the div exists, assume we are on the pull request page
+    if ($('.pull-request-tab-content').length > 0) {
+      isPullRequest = true;
+    }
+
+    // we're on the comparison page which has the 'create pull request button'
+    if (window.location.search === '?expand=1') {
+      isBranchCompare = true;
+    }
+  };
 
   // helper function
   var unique = function(array){
@@ -192,12 +211,21 @@ $(function() {
     });
   };
 
+  // avoid making unneccesary api calls to JIRA
+  var issuesNotYetRendered = function() {
+    return $('.js-jira-button-container').length === 0;
+  };
+
   // its the main function, stuff here all-the-things!
-  var main = function() {
+  main = function() {
+    checkPageLocation();
     issueNumbers = parseIssueNumbers();
 
     // pull request page
-    if (isPullRequest && issueNumbers.length) {
+    if (isPullRequest && issueNumbers.length && issuesNotYetRendered()) {
+      // reset
+      mergeHasHappend = false;
+
       issueNumbers.forEach(function(issueNumber) {
 
         renderIssue(issueNumber);
