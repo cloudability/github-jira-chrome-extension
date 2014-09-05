@@ -13,6 +13,7 @@
 .jira .branch-action-state-clean .branch-status {
   min-height: 76px;
   border-color: #205081;
+  padding: 10px 15px;
 }
 .jira .branch-action-state-clean .branch-status h2 {
   float: left;
