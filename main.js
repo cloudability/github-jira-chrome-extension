@@ -13,7 +13,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 $(function() {
   // place to stuff globals
   var global = {
-    labelWasChanged: false
+    labelWasChanged: false,
+    labelText: 'Code Review Passed'
   };
 
   var mergeHasHappend = false,
@@ -260,8 +261,24 @@ $(function() {
 
   // label was added/removed
   $('.sidebar-labels .js-navigation-item').on('click', function() {
-    if ($.trim($(this).text()) === "Code Review Passed") {
+    if ($.trim($(this).text()) === global.labelText) {
       global.labelWasChanged = true;
+    }
+  });
+
+  // prompt user if they go to merge a PR and the appropriate label is not found
+  $('.merge-branch-action.js-details-target').on('click', function() {
+    var passed = false;
+
+    // look for our label
+    $('.sidebar-labels .label').each(function() {
+      if ($.trim($(this).text()) === global.labelText) {
+        passed = true;
+      }
+    });
+
+    if (passed !== true) {
+      return confirm('The label "' + global.labelText + '" is not found. Are you sure?');
     }
   });
 
