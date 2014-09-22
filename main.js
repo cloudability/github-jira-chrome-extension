@@ -17,8 +17,7 @@ $(function() {
     labelText: 'Code Review Passed'
   };
 
-  var mergeHasHappend = false,
-      issueStatusHasChanged = false,
+  var issueStatusHasChanged = false,
       isPullRequest,
       isBranchCompare,
       checkPageLocation,
@@ -229,8 +228,6 @@ $(function() {
 
     // pull request page
     if (isPullRequest && issueNumbers.length && issuesNotYetRendered()) {
-      // reset
-      mergeHasHappend = false;
 
       issueNumbers.forEach(function(issueNumber) {
 
@@ -282,15 +279,6 @@ $(function() {
     }
   });
 
-  // pr was merged
-  $(document).on('submit', '.js-merge-pull-request', function() {
-    // assume this went ok
-    mergeHasHappend = true;
-
-    // re-render all the stuffs
-    main();
-  });
-
   // prompt the user if they attempt to leave the page after a PR has been merged
   // but the issue status has not changed
   window.onbeforeunload = function () {
@@ -300,9 +288,6 @@ $(function() {
       return 'The JIRA ticket(s) status hasn\'t changed, is that ok?';
     }
 
-    if (issueNumbers.length && isPullRequest && mergeHasHappend && issueStatusHasChanged === false) {
-      return 'The JIRA ticket(s) status didn\'t change, is that ok?';
-    }
   };
 
 });
