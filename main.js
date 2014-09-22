@@ -11,6 +11,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 $(function() {
+  // place to stuff globals
+  var global = {
+    labelWasChanged: false
+  };
+
   var mergeHasHappend = false,
       issueStatusHasChanged = false,
       isPullRequest,
@@ -253,6 +258,13 @@ $(function() {
 
   // handlers, misc
 
+  // label was added/removed
+  $('.sidebar-labels .js-navigation-item').on('click', function() {
+    if ($.trim($(this).text()) === "Code Review Passed") {
+      global.labelWasChanged = true;
+    }
+  });
+
   // pr was merged
   $(document).on('submit', '.js-merge-pull-request', function() {
     // assume this went ok
@@ -265,6 +277,12 @@ $(function() {
   // prompt the user if they attempt to leave the page after a PR has been merged
   // but the issue status has not changed
   window.onbeforeunload = function () {
+
+    // prompt if 'code review label' was changed but jira issue was not
+    if (issueNumbers.length && isPullRequest && global.labelWasChanged && issueStatusHasChanged === false) {
+      return 'The JIRA ticket(s) status hasn\'t changed, is that ok?';
+    }
+
     if (issueNumbers.length && isPullRequest && mergeHasHappend && issueStatusHasChanged === false) {
       return 'The JIRA ticket(s) status didn\'t change, is that ok?';
     }
