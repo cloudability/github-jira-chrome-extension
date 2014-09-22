@@ -14,29 +14,28 @@ $(function() {
   // place to stuff globals
   var global = {
     labelWasChanged: false,
-    labelText: 'Code Review Passed'
+    labelText: 'Code Review Passed',
+    issueStatusHasChanged: false,
+    isPullRequest: false,
+    issueNumbers: [],
+    isBranchCompare: false
   };
-
-  var issueStatusHasChanged = false,
-      isPullRequest,
-      isBranchCompare,
-      checkPageLocation,
-      issueNumbers = [];
+  var checkPageLocation;
 
   // we have to re-check on pushState :/
   checkPageLocation = function() {
     // reset
-    isPullRequest = false;
-    isBranchCompare = false;
+    global.isPullRequest = false;
+    global.isBranchCompare = false;
 
     // if the div exists, assume we are on the pull request page
     if ($('.pull-request-tab-content').length > 0) {
-      isPullRequest = true;
+      global.isPullRequest = true;
     }
 
     // we're on the comparison page which has the 'create pull request button'
     if (window.location.search === '?expand=1') {
-      isBranchCompare = true;
+      global.isBranchCompare = true;
     }
   };
 
@@ -149,7 +148,7 @@ $(function() {
           data: JSON.stringify({ 'transition': { 'id': transitionId }}),
           success: function() {
 
-            issueStatusHasChanged = true;
+            global.issueStatusHasChanged = true;
 
             renderIssue(issueNumber);
           }
@@ -224,26 +223,26 @@ $(function() {
   // its the main function, stuff here all-the-things!
   main = function() {
     checkPageLocation();
-    issueNumbers = parseIssueNumbers();
+    global.issueNumbers = parseIssueNumbers();
 
     // pull request page
-    if (isPullRequest && issueNumbers.length && issuesNotYetRendered()) {
+    if (global.isPullRequest && global.issueNumbers.length && issuesNotYetRendered()) {
 
-      issueNumbers.forEach(function(issueNumber) {
+      global.issueNumbers.forEach(function(issueNumber) {
 
         renderIssue(issueNumber);
 
       });
 
     // attempt to auto-fill the PR title
-    } else if (isBranchCompare) {
+    } else if (global.isBranchCompare) {
 
       // keeping it simple
-      if (issueNumbers.length === 1) {
+      if (global.issueNumbers.length === 1) {
 
-        getIssue(issueNumbers[0], function(data) {
+        getIssue(global.issueNumbers[0], function(data) {
           // insert into the input field
-          $('#pull_request_title').val(issueNumbers[0] + ' - ' + data.fields.summary);
+          $('#pull_request_title').val(global.issueNumbers[0] + ' - ' + data.fields.summary);
         });
 
       }
@@ -284,7 +283,7 @@ $(function() {
   window.onbeforeunload = function () {
 
     // prompt if 'code review label' was changed but jira issue was not
-    if (issueNumbers.length && isPullRequest && global.labelWasChanged && issueStatusHasChanged === false) {
+    if (global.issueNumbers.length && global.isPullRequest && global.labelWasChanged && global.issueStatusHasChanged === false) {
       return 'The JIRA ticket(s) status hasn\'t changed, is that ok?';
     }
 
