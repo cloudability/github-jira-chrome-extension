@@ -263,7 +263,7 @@ $(function() {
   });
 
   // prompt user if they go to merge a PR and the appropriate label is not found
-  $('.merge-branch-action.js-details-target').on('click', function() {
+  $(document).on('click', '.merge-branch-action.js-details-target', function() {
     var passed = false;
 
     // look for our label
@@ -274,7 +274,7 @@ $(function() {
     });
 
     if (passed !== true) {
-      return confirm('The label "' + global.labelText + '" is not found. Are you sure?');
+      alert('The label "' + global.labelText + '" is not applied. Continue at great peril.');
     }
   });
 
