@@ -30,6 +30,7 @@
   background: linear-gradient(to bottom, #3b7fc4 0%, #336ea9 100%);
   box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.1) inset,0 1px 1px 0 rgba(0, 0, 0, 0.2);
   border: 0;
+  margin-bottom: 5px;
 }
 .jira .button.primary:hover {
   color: #fff;
@@ -60,3 +61,4 @@
 .jira .issue-title {
   float: left;
 }
+
