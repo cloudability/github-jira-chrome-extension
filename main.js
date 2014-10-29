@@ -126,7 +126,7 @@ $(function() {
     // render the buttons
     transitionData.forEach(function(transition) {
       button = '' +
-        '<button class="button primary merge-branch-action js-jira-transition" type="button" data-jira-transition-id="' + transition.id + '">' +
+        '<button class="button minibutton primary merge-branch-action js-jira-transition" type="button" data-jira-transition-id="' + transition.id + '">' +
           transition.name +
         '</button>';
 
@@ -261,32 +261,4 @@ $(function() {
       global.labelWasChanged = true;
     }
   });
-
-  // prompt user if they go to merge a PR and the appropriate label is not found
-  $(document).on('click', '.merge-branch-action.js-details-target', function() {
-    var passed = false;
-
-    // look for our label
-    $('.sidebar-labels .label').each(function() {
-      if ($.trim($(this).text()) === global.labelText) {
-        passed = true;
-      }
-    });
-
-    if (passed !== true) {
-      alert('The label "' + global.labelText + '" is not applied. Continue at great peril.');
-    }
-  });
-
-  // prompt the user if they attempt to leave the page after a PR has been merged
-  // but the issue status has not changed
-  window.onbeforeunload = function () {
-
-    // prompt if 'code review label' was changed but jira issue was not
-    if (global.issueNumbers.length && global.isPullRequest && global.labelWasChanged && global.issueStatusHasChanged === false) {
-      return 'The JIRA ticket(s) status hasn\'t changed, is that ok?';
-    }
-
-  };
-
 });

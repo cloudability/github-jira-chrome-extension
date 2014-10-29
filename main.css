@@ -52,7 +52,8 @@
 }
 .jira .octicon-sync.minibutton {
   float: right;
-  padding: 1px 4px;
+  width: 31px;
+  height: 25px;
 }
 .jira .clearfix {
   clear: both;
