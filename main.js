@@ -87,7 +87,7 @@ $(function() {
           '<span class="mega-octicon octicon-git-pull-request branch-action-icon"></span>' +
           '<div class="branch-action-body">' +
 
-            '<div class="branch-status">' +
+            '<div class="status">' +
               '<h2><a href="https://cloudability.atlassian.net/browse/' + issueNumber +'" target="_blank">' + issueNumber + '</a></h2>' +
               '<div style="float: right;">' +
                 'Current Ticket Status: <strong><span class="js-jira-current-state"></span</strong>' +
@@ -98,9 +98,9 @@ $(function() {
               '<div class="clearfix">&nbsp;</div>' +
             '</div>' +
 
-            '<div class="merge-message js-jira-button-container">' +
+            '<div class="button-container js-jira-button-container">' +
               '<div style="clear: both; height: 0px;">&nbsp;</div>' +
-            '</div><!-- /.merge-message -->' +
+            '</div><!-- /.button-container -->' +
           '</div><!-- /.branch-action-body -->' +
         '</div><!-- /.branch-action -->';
 
@@ -261,4 +261,12 @@ $(function() {
       global.labelWasChanged = true;
     }
   });
+
+  // prompt if someone tries to merge a PR with a failing build
+  $('.merge-branch-action.js-details-target').on('click', function() {
+    if ($('.branch-status').find('.octicon-x').length === 1) {
+      return confirm('The build is failing!! Are you sure?');
+    }
+  });
+
 });

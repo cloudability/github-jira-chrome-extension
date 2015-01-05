@@ -10,12 +10,16 @@
 .jira .branch-action-state-clean .branch-action-body:before {
   border-right-color: #205081;
 }
-.jira .branch-action-state-clean .branch-status {
+.jira .button-container {
+  padding: 15px;
+}
+.jira .branch-action-state-clean .status {
   min-height: 76px;
+  border-bottom: 1px solid;
   border-color: #205081;
   padding: 10px 15px;
 }
-.jira .branch-action-state-clean .branch-status h2 {
+.jira .branch-action-state-clean .status h2 {
   float: left;
   margin: 0px;
 }
