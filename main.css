@@ -1,6 +1,9 @@
 .jira.merge-pr {
   min-height: 140px;
 }
+.jira {
+  font-family: Arial, sans-serif;
+}
 .jira .branch-action-state-clean .branch-action-icon {
   background-color: #205081;
 }
@@ -20,6 +23,7 @@
   padding: 10px 15px;
 }
 .jira .branch-action-state-clean .status h2 {
+  font-size: 20px;
   float: left;
   margin: 0px;
 }
@@ -56,14 +60,73 @@
 }
 .jira .octicon-sync.minibutton {
   float: right;
-  width: 31px;
-  height: 25px;
+  width: 2em;
+  height: 2em;
+  margin: 1px 0px 0px 7px;
+  padding: 6px;
+  font-size: 15px;
 }
 .jira .clearfix {
   clear: both;
   height: 0px;
 }
 .jira .issue-title {
-  float: left;
+  font-size: 16px;
+}
+.jira .refresh-area {
+  float: right;
+}
+.jira .refresh-area div {
+  display: inline-block;
+  min-width: 200px;
 }
 
+.jira .current-state {
+  padding: 2px 5px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+
+  background-color: #4a6785;
+  border-color: #4a6785;
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.jira .status .green {
+  background-color: #14892c;
+  border-color: #14892c;
+  color: #fff;
+}
+
+.jira .status .yellow {
+  background-color: #ffd351;
+  border-color: #ffd351;
+  color: #594300;
+}
+
+.jira .table-row {
+  display: table;
+  width: 100%;
+}
+
+.jira .table-cell {
+  width: 31%;
+  display: table-cell;
+  vertical-align: middle;
+}
+.jira .table-cell:last-of-type {
+  width: 7%;
+}
+
+.jira .table-cell.assignee {
+  font-size: 14px;
+}
+
+.jira .table-cell.assignee img {
+  vertical-align: middle;
+  padding-right: 5px;
+  border-radius: 3px;
+}

@@ -88,14 +88,17 @@ $(function() {
           '<div class="branch-action-body">' +
 
             '<div class="status">' +
-              '<h2><a href="https://cloudability.atlassian.net/browse/' + issueNumber +'" target="_blank">' + issueNumber + '</a></h2>' +
-              '<div style="float: right;">' +
-                'Current Ticket Status: <strong><span class="js-jira-current-state"></span</strong>' +
+              '<div class="table-row">' +
+                '<div class="table-cell">' +
+                  '<h2><a href="https://cloudability.atlassian.net/browse/' + issueNumber +'" target="_blank">' + issueNumber + '</a></h2>' +
+                '</div>' +
+                '<div class="table-cell"><strong><span class="js-jira-current-state current-state"></span></strong></div>' +
+                '<div class="table-cell assignee js-jira-assignee"></div>' +
+                '<div class="table-cell"><button class="js-refresh-issue octicon octicon-sync minibutton"></button></div>' +
               '</div>' +
-              '<div class="clearfix">&nbsp;</div>' +
-              '<div class="js-jira-issue-title issue-title"></div>' +
-              '<button class="js-refresh-issue octicon octicon-sync minibutton"></button>' +
-              '<div class="clearfix">&nbsp;</div>' +
+              '<div class="table-row">' +
+                '<span class="js-jira-issue-title issue-title"></span>' +
+              '</div>' +
             '</div>' +
 
             '<div class="button-container js-jira-button-container">' +
@@ -185,7 +188,19 @@ $(function() {
 
     getIssue(issueNumber, function(data) {
       $sel.find('.js-jira-current-state').text(data.fields.status.name);
+
+      // status color
+      if (data.fields.status && data.fields.status.statusCategory) {
+        $sel.find('.js-jira-current-state').addClass(data.fields.status.statusCategory.colorName);
+      }
+
       $sel.find('.js-jira-issue-title').text(data.fields.summary);
+
+      // assignee
+      if (data.fields.assignee) {
+        $sel.find('.js-jira-assignee').text(data.fields.assignee.displayName);
+        $sel.find('.js-jira-assignee').prepend('<img src="'+data.fields.assignee.avatarUrls['24x24']+'">');
+      }
     });
 
   };
