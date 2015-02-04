@@ -4,6 +4,9 @@
 .jira {
   font-family: Arial, sans-serif;
 }
+.jira .branch-action-body {
+  position: relative;
+}
 .jira .branch-action-state-clean .branch-action-icon {
   background-color: #205081;
 }
@@ -13,13 +16,21 @@
 .jira .branch-action-state-clean .branch-action-body:before {
   border-right-color: #205081;
 }
+.jira .slider-container {
+  text-align: center;
+  cursor: pointer;
+}
+.jira .slider-container:hover {
+  background-color: #E0E0E0;
+  border-radius: 3px;
+}
 .jira .button-container {
   padding: 15px;
+  border-top: 1px solid;
+  border-color: #205081;
 }
 .jira .branch-action-state-clean .status {
   min-height: 76px;
-  border-bottom: 1px solid;
-  border-color: #205081;
   padding: 10px 15px;
 }
 .jira .branch-action-state-clean .status h2 {
@@ -128,5 +139,16 @@
 .jira .table-cell.assignee img {
   vertical-align: middle;
   padding-right: 5px;
+  border-radius: 3px;
+}
+
+.jira .spinner-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.6;
+  background-color: white;
   border-radius: 3px;
 }

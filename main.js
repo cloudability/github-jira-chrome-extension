@@ -101,7 +101,8 @@ $(function() {
               '</div>' +
             '</div>' +
 
-            '<div class="button-container js-jira-button-container">' +
+            '<div class="js-button-slider-container slider-container"><span class="octicon octicon-chevron-down"></span></div>' +
+            '<div class="button-container js-jira-button-container" style="display: none;">' +
               '<div style="clear: both; height: 0px;">&nbsp;</div>' +
             '</div><!-- /.button-container -->' +
           '</div><!-- /.branch-action-body -->' +
@@ -160,11 +161,19 @@ $(function() {
 
     });
 
+    // slider to open the buttons
+    $('[data-jira-issue="'+issueNumber+'"]').on('mouseover', '.js-button-slider-container', function() {
+      $(this).siblings('.js-jira-button-container').slideDown('fast');
+      $(this).remove();
+    });
+
     // refresh button
     $('[data-jira-issue="'+issueNumber+'"]').on('click', '.js-refresh-issue', function(e) {
       var issueNumber = $(this).closest('.js-details-container').data('jiraIssue');
 
       e.preventDefault();
+
+      addSpinner(issueNumber);
 
       renderIssue(issueNumber);
     });
@@ -181,6 +190,14 @@ $(function() {
     }).error(function(data) {
       console.error('getIssue FACK!', issueNumber, data);
     });
+  };
+
+  var addSpinner = function(issueNumber) {
+    var $sel = $('[data-jira-issue="'+issueNumber+'"]').find('.branch-action-body');
+
+    var tmpl = '<div class="spinner-background"></div>';
+
+    $sel.append(tmpl);
   };
 
   var renderIssueStatus = function(issueNumber) {
