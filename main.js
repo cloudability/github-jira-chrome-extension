@@ -185,14 +185,10 @@ $(function() {
   };
 
   // wrapper around the ajax call
-  var getIssue = function(issueNumber, cb) {
-    $.ajax({
+  var getIssue = function(issueNumber) {
+    return $.ajax({
       type: 'GET',
       url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber+'?expand=transitions'
-    }).done(function(data) {
-      cb(data);
-    }).error(function(data) {
-      console.error('getIssue FACK!', issueNumber, data);
     });
   };
 
@@ -221,11 +217,9 @@ $(function() {
   var renderIssue = function(issueNumber) {
     var avatarUrl, assignee, $sel;
 
-    getIssue(issueNumber, function(data) {
+    getIssue(issueNumber).done(function(data) {
 
       appendTransitionButtonDiv(issueNumber, data.transitions);
-      // does this occur anymore?
-      //renderIssueError(issueNumber, JSON.parse(data.responseText).errorMessages.join(' '));
 
       $sel = $('[data-jira-issue="'+issueNumber+'"]');
 
@@ -252,6 +246,12 @@ $(function() {
         $sel.find('.js-jira-assignee').text(assignee);
         $sel.find('.js-jira-assignee').prepend('<img src="'+avatarUrl+'">');
       }
+
+    }).error(function(data) {
+      console.error('getIssue FACK!', issueNumber, data);
+
+      // does this occur anymore?
+      //renderIssueError(issueNumber, JSON.parse(data.responseText).errorMessages.join(' '));
 
     });
   };
@@ -281,7 +281,7 @@ $(function() {
       // keeping it simple
       if (global.issueNumbers.length === 1) {
 
-        getIssue(global.issueNumbers[0], function(data) {
+        getIssue(global.issueNumbers[0]).done(function(data) {
           // insert into the input field
           $('#pull_request_title').val(global.issueNumbers[0] + ' - ' + data.fields.summary);
         });
