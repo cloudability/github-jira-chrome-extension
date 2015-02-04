@@ -1,5 +1,5 @@
 .jira.merge-pr {
-  min-height: 140px;
+  min-height: 85px;
 }
 .jira {
   font-family: Arial, sans-serif;
@@ -30,7 +30,7 @@
   border-color: #eee;
 }
 .jira .branch-action-state-clean .status {
-  min-height: 76px;
+  min-height: 66px;
   padding: 10px 15px;
 }
 .jira .branch-action-state-clean .status h2 {
@@ -157,7 +157,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.8;
+  opacity: 0.9;
   background-color: white;
   border-radius: 3px;
 }

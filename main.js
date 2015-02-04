@@ -188,7 +188,7 @@ $(function() {
   var getIssue = function(issueNumber, cb) {
     $.ajax({
       type: 'GET',
-      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber
+      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber+'?expand=transitions'
     }).done(function(data) {
       cb(data);
     }).error(function(data) {
@@ -203,7 +203,7 @@ $(function() {
       '<div class="spinner-background">' +
         '<div class="spinner-container">' +
           '<div style="margin: 0 auto; display: table; height: 100%;">' +
-            '<span class="spinner-icon octicon mega-octicon octicon-clock" style="display: table-cell; vertical-align: middle;"></span>' +
+            '<span class="spinner-icon octicon mega-octicon octicon-hourglass" style="display: table-cell; vertical-align: middle;"></span>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -211,11 +211,24 @@ $(function() {
     $sel.append(tmpl);
   };
 
-  var renderIssueStatus = function(issueNumber) {
-    var avatarUrl, assignee,
-        $sel = $('[data-jira-issue="'+issueNumber+'"]');
+  var renderIssueError = function(issueNumber, message) {
+    var $sel = $('[data-jira-issue="'+issueNumber+'"]');
+
+    $sel.find('.js-jira-current-state').text('Unknown');
+    $sel.find('.js-jira-button-container').prepend(message);
+  };
+
+  var renderIssue = function(issueNumber) {
+    var avatarUrl, assignee, $sel;
 
     getIssue(issueNumber, function(data) {
+
+      appendTransitionButtonDiv(issueNumber, data.transitions);
+      // does this occur anymore?
+      //renderIssueError(issueNumber, JSON.parse(data.responseText).errorMessages.join(' '));
+
+      $sel = $('[data-jira-issue="'+issueNumber+'"]');
+
       $sel.find('.js-jira-current-state').text(data.fields.status.name);
 
       // status color
@@ -239,32 +252,6 @@ $(function() {
         $sel.find('.js-jira-assignee').text(assignee);
         $sel.find('.js-jira-assignee').prepend('<img src="'+avatarUrl+'">');
       }
-
-    });
-
-  };
-
-  var renderIssueError = function(issueNumber, message) {
-    var $sel = $('[data-jira-issue="'+issueNumber+'"]');
-
-    $sel.find('.js-jira-current-state').text('Unknown');
-    $sel.find('.js-jira-button-container').prepend(message);
-  };
-
-  var renderIssue = function(issueNumber) {
-    // get possible transitions
-    $.ajax({
-      type: 'GET',
-      url: 'https://cloudability.atlassian.net/rest/api/2/issue/'+issueNumber+'/transitions'
-    }).done(function(data) {
-
-      appendTransitionButtonDiv(issueNumber, data.transitions);
-      renderIssueStatus(issueNumber);
-
-    }).error(function(data) {
-
-      appendTransitionButtonDiv(issueNumber);
-      renderIssueError(issueNumber, JSON.parse(data.responseText).errorMessages.join(' '));
 
     });
   };
