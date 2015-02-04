@@ -92,8 +92,8 @@ $(function() {
                 '<div class="table-cell">' +
                   '<h2><a href="https://cloudability.atlassian.net/browse/' + issueNumber +'" target="_blank">' + issueNumber + '</a></h2>' +
                 '</div>' +
-                '<div class="table-cell"><strong><span class="js-jira-current-state current-state"></span></strong></div>' +
                 '<div class="table-cell assignee js-jira-assignee"></div>' +
+                '<div class="table-cell"><strong><span class="js-jira-current-state current-state"></span></strong></div>' +
                 '<div class="table-cell"><button class="js-refresh-issue octicon octicon-sync minibutton"></button></div>' +
               '</div>' +
               '<div class="table-row">' +
@@ -144,6 +144,9 @@ $(function() {
       e.preventDefault();
 
       if (transitionId && issueNumber) {
+
+        addSpinner(issueNumber);
+
         $.ajax({
           type: 'POST',
           dataType: 'json',
@@ -162,8 +165,9 @@ $(function() {
     });
 
     // slider to open the buttons
-    $('[data-jira-issue="'+issueNumber+'"]').on('mouseover', '.js-button-slider-container', function() {
-      $(this).siblings('.js-jira-button-container').slideDown('fast');
+    $('[data-jira-issue="'+issueNumber+'"]').on('click', '.js-button-slider-container', function(e) {
+      e.preventDefault();
+      $(this).siblings('.js-jira-button-container').slideDown(100);
       $(this).remove();
     });
 
@@ -195,13 +199,21 @@ $(function() {
   var addSpinner = function(issueNumber) {
     var $sel = $('[data-jira-issue="'+issueNumber+'"]').find('.branch-action-body');
 
-    var tmpl = '<div class="spinner-background"></div>';
+    var tmpl = ''+
+      '<div class="spinner-background">' +
+        '<div class="spinner-container">' +
+          '<div style="margin: 0 auto; display: table; height: 100%;">' +
+            '<span class="spinner-icon octicon mega-octicon octicon-clock" style="display: table-cell; vertical-align: middle;"></span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
 
     $sel.append(tmpl);
   };
 
   var renderIssueStatus = function(issueNumber) {
-    var $sel = $('[data-jira-issue="'+issueNumber+'"]');
+    var avatarUrl, assignee,
+        $sel = $('[data-jira-issue="'+issueNumber+'"]');
 
     getIssue(issueNumber, function(data) {
       $sel.find('.js-jira-current-state').text(data.fields.status.name);
@@ -213,11 +225,21 @@ $(function() {
 
       $sel.find('.js-jira-issue-title').text(data.fields.summary);
 
-      // assignee
+      // assignee stuffs
       if (data.fields.assignee) {
-        $sel.find('.js-jira-assignee').text(data.fields.assignee.displayName);
-        $sel.find('.js-jira-assignee').prepend('<img src="'+data.fields.assignee.avatarUrls['24x24']+'">');
+        assignee = data.fields.assignee.displayName;
+        avatarUrl = data.fields.assignee.avatarUrls['24x24'];
+
+      } else if (data.fields.assignee === null) {
+        assignee = 'Unassigned';
+        avatarUrl = 'https://cloudability.atlassian.net/secure/useravatar?size=small&avatarId=10123';
       }
+
+      if (assignee && avatarUrl) {
+        $sel.find('.js-jira-assignee').text(assignee);
+        $sel.find('.js-jira-assignee').prepend('<img src="'+avatarUrl+'">');
+      }
+
     });
 
   };
