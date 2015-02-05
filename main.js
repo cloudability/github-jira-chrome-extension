@@ -211,7 +211,7 @@ $(function() {
     var $sel = $('[data-jira-issue="'+issueNumber+'"]');
 
     $sel.find('.js-jira-current-state').text('Unknown');
-    $sel.find('.js-jira-button-container').prepend(message);
+    $sel.find('.js-jira-issue-title').text(message);
   };
 
   var renderIssue = function(issueNumber) {
@@ -248,11 +248,10 @@ $(function() {
       }
 
     }).error(function(data) {
-      console.error('getIssue FACK!', issueNumber, data);
+      console.error('getIssue FACK!', issueNumber, data.responseText);
 
-      // does this occur anymore?
-      //renderIssueError(issueNumber, JSON.parse(data.responseText).errorMessages.join(' '));
-
+      appendTransitionButtonDiv(issueNumber);
+      renderIssueError(issueNumber, data.responseJSON.errorMessages[0]);
     });
   };
 
