@@ -94,7 +94,7 @@ $(function() {
                 '</div>' +
                 '<div class="table-cell assignee js-jira-assignee"></div>' +
                 '<div class="table-cell"><strong><span class="js-jira-current-state current-state"></span></strong></div>' +
-                '<div class="table-cell"><button class="js-refresh-issue octicon octicon-sync minibutton"></button></div>' +
+                '<div class="table-cell"><button type="button" class="js-refresh-issue octicon octicon-sync btn minibutton"></button></div>' +
               '</div>' +
               '<div class="table-row">' +
                 '<span class="js-jira-issue-title issue-title"></span>' +
@@ -130,7 +130,7 @@ $(function() {
     // render the buttons
     transitionData.forEach(function(transition) {
       button = '' +
-        '<button class="button minibutton primary merge-branch-action js-jira-transition" type="button" data-jira-transition-id="' + transition.id + '">' +
+        '<button type="button" class="js-jira-transition btn minibutton primary merge-branch-action" data-jira-transition-id="' + transition.id + '">' +
           transition.name +
         '</button>';
 
