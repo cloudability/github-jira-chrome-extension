@@ -1,0 +1,46 @@
+{
+  "name": "stuff-and-things",
+  "version": "1.0.0",
+  "description": "Yup",
+  "scripts": {
+    "build": "./bin/build",
+    "start": "webpack --config config/webpack-dev.config.js --progress --profile --colors --watch --display-error-details"
+  },
+  "git-pre-hooks": {
+    "pre-push": "npm run test"
+  },
+  "author": "Tony Rieker",
+  "license": "ISC",
+  "dependencies": {
+    "babel": "^4.7.16",
+    "immutable": "^3.7.4",
+    "lodash": "^3.9.3",
+    "nuclear-js": "^1.0.5",
+    "superagent": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^4.7.16",
+    "babel-eslint": "^2.0.2",
+    "babel-loader": "^4.2.0",
+    "chai": "^2.1.2",
+    "css-loader": "^0.9.1",
+    "extract-text-webpack-plugin": "^0.5.0",
+    "file-loader": "^0.8.1",
+    "git-pre-hooks": "^1.1.1",
+    "jsx-loader": "^0.12.2",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-cli": "0.0.4",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-mocha": "^0.1.10",
+    "karma-sinon-chai": "^0.3.0",
+    "karma-webpack": "^1.5.0",
+    "mocha": "^2.2.1",
+    "react": "^0.13.1",
+    "react-hot-loader": "^1.2.3",
+    "react-tools": "^0.13.1",
+    "sass-loader": "^1.0.0",
+    "style-loader": "^0.9.0",
+    "webpack": "^1.7.3"
+  }
+}
