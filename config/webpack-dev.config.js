@@ -2,17 +2,17 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var path = require('path');
 var root = path.join(__dirname, '..');
 var context = path.join(root, 'src');
-var clientDir = path.join(context, 'client');
+var reactDir = path.join(context, 'react');
 
-var modules = ['ui', 'mixins'];
+var modules = ['react', 'mixins'];
 var moduleDirectories = modules.map(function(mod) {
-  return path.join(clientDir, mod);
+  return path.join(reactDir, mod);
 });
 
 module.exports = {
   entry: {
     background: path.join(context, 'background.js'),
-    client: path.join(context, 'client.jsx')
+    client: path.join(reactDir, 'Application.jsx')
   },
 
   context: context,

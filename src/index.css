@@ -1,8 +1,8 @@
 .app {}
 
 @keyframes rotateMe {
-  0% { transform: rotate(180deg); }
-  100% { transform: rotate(540deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 .jira .rotate-me {
   animation: rotateMe infinite ease-in-out 1.5s;
@@ -183,6 +183,9 @@
   z-index: 1;
   cursor: pointer;
 }
+.jira .opaque-overlay:hover {
+  opacity: 0.8;
+}
 
 .jira .spinner-container {
   position: relative;
@@ -190,6 +193,7 @@
   width: 100%;
 }
 
-.jira .octicon-pencil {
-  opacity: inherit;
+.jira .spinner-icon {
+  display: table-cell;
+  vertical-align: middle;
 }

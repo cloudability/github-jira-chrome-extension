@@ -8,6 +8,10 @@ var issuesStore = new Nuclear.Store({
 
   initialize: function() {
 
+    this.on(actions.issues.clear, function(state) {
+      return state.clear();
+    });
+
     this.on(actions.issues.set, function(state, payload) {
       return state.set(payload.get('id'), payload);
     });

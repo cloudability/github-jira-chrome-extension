@@ -39,7 +39,7 @@ module.exports = React.createClass({
         <div className="spinner-background">
           <div className="spinner-container">
             <div style={{ margin: '0 auto', display: 'table', height: '100%' }}>
-              <span className="spinner-icon octicon mega-octicon octicon-hourglass rotate-me flip-horiz" style={{ display: 'table-cell', 'vertical-align': 'middle'}} />
+              <span className="spinner-icon octicon mega-octicon octicon-hourglass rotate-me" />
             </div>
           </div>
         </div>

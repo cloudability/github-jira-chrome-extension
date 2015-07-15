@@ -13,7 +13,7 @@ module.exports = React.createClass({
 
   getInitialState: function() {
     return {
-      opaque: true
+      opaque: false
     }
   },
 

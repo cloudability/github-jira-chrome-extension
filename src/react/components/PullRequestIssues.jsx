@@ -1,7 +1,6 @@
-require('./index.css'); // huh?
-
 var React = require('react'),
     api = require('../helpers/api'),
+    findJiraIssues = require('../helpers/pullrequest').findJiraIssues,
     flux = require('../state/flux'),
     actions = require('../state/actions'),
     _ = require('lodash'),
@@ -19,7 +18,9 @@ module.exports = React.createClass({
 
   componentWillMount: function() {
 
-    this._findJiraIssues().forEach(function(issue) {
+    flux.dispatch(actions.issues.clear);
+
+    findJiraIssues().forEach(function(issue) {
       this._loadIssue(issue);
     }.bind(this));
   },
@@ -36,47 +37,6 @@ module.exports = React.createClass({
       flux.dispatch(actions.issues.set, Map(res.body));
 
     }.bind(this));
-  },
-
-  _findJiraIssues: function() {
-    var matches = [],
-        results = [];
-
-    var unique = function(array){
-      return array.filter(function(el, index, arr) {
-        return index === arr.indexOf(el);
-      });
-    };
-
-    var grepForIssueNumber = function(text) {
-      return text.match(/(CA\-[\d]+)/g) || [];
-    };
-
-    // look in the issue title
-    document.querySelectorAll('div.discussion-timeline-actions')
-    matches = grepForIssueNumber(document.querySelectorAll('.js-issue-title')[0].textContent);
-    if (matches.length) {
-      results = results.concat(matches);
-    }
-
-    // the second occurance of a branch listing
-    matches = grepForIssueNumber(document.querySelectorAll('.current-branch')[1].textContent);
-    if (matches.length) {
-      results = results.concat(matches);
-    }
-
-    // timeline commits
-    var messages = document.querySelectorAll('.timeline-commits a.message');
-
-    // friggin querySelectorAll returns a NodeList
-    for (var i = 0; i < messages.length; ++i) {
-      matches = grepForIssueNumber(messages[i].textContent);
-      if (matches.length) {
-        results = results.concat(matches);
-      }
-    }
-
-    return unique(results);
   },
 
   _jiraIssues: function() {

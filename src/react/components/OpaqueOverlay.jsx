@@ -10,7 +10,7 @@ module.exports = React.createClass({
     return (
       <div className="opaque-overlay" onClick={ this.props.onClick }>
         <div style={{ margin: '0 auto', display: 'table', height: '100%' }}>
-          { /*<span className="octicon mega-octicon octicon-pencil" style={{ display: 'table-cell', 'verticalAlign': 'middle'}} /> */ }
+          { /* <span className="octicon octicon-pencil" /> */ }
         </div>
       </div>
     );
