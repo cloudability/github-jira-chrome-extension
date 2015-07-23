@@ -1,4 +1,5 @@
-var api = require('./api');
+var _ = require('lodash'),
+    api = require('./api');
 
 // try to auto-fill the pull request title
 var titleFill = function() {
@@ -25,12 +26,6 @@ var findJiraIssues = function() {
       messages = [],
       timelineActions = [],
       currentBranch = [];
-
-  var unique = function(array){
-    return array.filter(function(el, index, arr) {
-      return index === arr.indexOf(el);
-    });
-  };
 
   var grepForIssueNumber = function(text) {
     return text.match(/(CA\-[\d]+)/g) || [];
@@ -68,7 +63,7 @@ var findJiraIssues = function() {
     }
   }
 
-  return unique(results);
+  return _.unique(results);
 };
 
 

@@ -3,7 +3,6 @@ var React = require('react'),
     findJiraIssues = require('../helpers/pullrequest').findJiraIssues,
     flux = require('../state/flux'),
     actions = require('../state/actions'),
-    _ = require('lodash'),
     JiraIssue = require('./JiraIssue.jsx'),
     Map = require('immutable').Map;
 

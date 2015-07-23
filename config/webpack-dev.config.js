@@ -12,7 +12,8 @@ var moduleDirectories = modules.map(function(mod) {
 module.exports = {
   entry: {
     background: path.join(context, 'background.js'),
-    client: path.join(reactDir, 'Application.jsx')
+    client: path.join(reactDir, 'Application.jsx'),
+    options: path.join(reactDir, 'Options.jsx')
   },
 
   context: context,
