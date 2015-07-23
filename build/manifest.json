@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Cloudability",
-  "version": "1.0.1",
+  "version": "0.4.0",
   "description": "Buttons to change JIRA ticket status from the Github Pull Request page.",
   "permissions": [
     "storage",

@@ -9,7 +9,7 @@
   "git-pre-hooks": {
     "pre-push": "npm run test"
   },
-  "author": "Tony Rieker",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "babel": "^4.7.16",
